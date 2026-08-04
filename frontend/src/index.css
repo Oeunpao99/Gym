@@ -773,15 +773,11 @@ tbody tr:hover td {
   background: var(--pa-surface);
   border-radius: var(--pa-radius-lg);
   padding: 24px 26px;
-  width: 440px;
+  width: 80%;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--pa-shadow-overlay);
   border-top: 4px solid var(--pa-primary);
-}
-
-.modal-wide {
-  width: 680px;
 }
 
 .modal h3 {

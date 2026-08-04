@@ -27,7 +27,7 @@ export function MemberDetailsModal({ member, onClose }: MemberDetailsModalProps)
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>{member.name}</h3>
         <div className="member-details-grid">
           <div>
