@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    env_file: .env.dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - gym_db_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gym}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    env_file: .env.dev
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "./scripts/wait-for-db.sh db 5432 &&
+             alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    env_file: .env.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    command: ["npm", "run", "dev", "--", "--host"]
+
+volumes:
+  gym_db_dev_data:

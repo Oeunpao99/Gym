@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Member Card</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+      :root {
+        --green: #1a6b35;
+        --green-light: #2d8a4a;
+        --red: #e03a2f;
+        --ink: #1a1a1a;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --bg: #c8cdd4;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 24px;
+        gap: 20px;
+      }
+
+      /* Toolbar */
+      .toolbar {
+        width: 100%;
+        max-width: 1240px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .toolbar h1 {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1f2937;
+      }
+      .toolbar-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .toolbar-actions input,
+      .toolbar-actions select {
+        padding: 9px 16px;
+        border-radius: 999px;
+        border: 1px solid #d1d5db;
+        background: white;
+        font: inherit;
+        font-size: 14px;
+        min-width: 180px;
+        outline: none;
+      }
+      .toolbar-actions button {
+        padding: 9px 20px;
+        border-radius: 999px;
+        border: 0;
+        background: var(--green);
+        color: white;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .toolbar-actions button:hover {
+        background: var(--green-light);
+      }
+
+      /* Outer white card */
+      .card-wrap {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 1240px;
+        box-shadow: 0 6px 40px rgba(0, 0, 0, 0.14);
+      }
+
+      /* Banner */
+      .access-banner {
+        padding: 24px 48px;
+        text-align: center;
+        font-size: clamp(22px, 4vw, 52px);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: white;
+      }
+      .access-banner.denied {
+        background: #e03a2f;
+      }
+      .access-banner.allowed {
+        background: #1a9e5b;
+      }
+      .access-banner.waiting {
+        background: #2563eb;
+      }
+
+      /* 3-column body */
+      .card-body {
+        display: grid;
+        grid-template-columns: 300px 1fr auto;
+        gap: 0;
+        padding: 44px 48px 36px;
+        align-items: center;
+        min-height: 430px;
+      }
+
+      /* LEFT */
+      .left-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding-right: 40px;
+        border-right: 1px solid var(--line);
+      }
+
+      .brand-name {
+        font-size: clamp(17px, 2vw, 24px);
+        font-weight: 900;
+        color: var(--green);
+        letter-spacing: 0.06em;
+        text-align: center;
+        text-transform: uppercase;
+      }
+      .brand-sub {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-top: 2px;
+      }
+
+      .photo-ring {
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        border: 5px solid var(--green);
+        overflow: hidden;
+        background: #e2e8f0;
+        flex-shrink: 0;
+      }
+      .photo-ring img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .member-name {
+        font-size: clamp(18px, 2.2vw, 26px);
+        font-weight: 800;
+        color: var(--ink);
+        text-align: center;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .member-role {
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 500;
+        text-align: center;
+        margin-top: 2px;
+      }
+
+      /* MIDDLE */
+      .mid-col {
+        padding: 0 48px;
+      }
+
+      .section-label {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--green);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .section-title {
+        font-size: clamp(20px, 2.6vw, 30px);
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 16px;
+      }
+      .divider {
+        height: 3px;
+        background: linear-gradient(90deg, var(--green), #4ade80, transparent);
+        border-radius: 2px;
+        margin-bottom: 24px;
+      }
+
+      .info-table {
+        display: grid;
+        gap: 14px;
+      }
+      .info-row {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        align-items: center;
+        gap: 8px;
+      }
+      .info-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .info-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .info-value.red {
+        color: #dc2626;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 22px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        border: 2px solid;
+      }
+      .status-pill.expired {
+        color: #dc2626;
+        border-color: #dc2626;
+        background: #fff5f5;
+      }
+      .status-pill.active {
+        color: var(--green);
+        border-color: var(--green);
+        background: #f0faf4;
+      }
+      .status-pill.expiring {
+        color: #d97706;
+        border-color: #d97706;
+        background: #fffbeb;
+      }
+
+      /* RIGHT */
+      .right-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        padding-left: 40px;
+        border-left: 1px solid var(--line);
+      }
+      .qr-box {
+        background: white;
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+      }
+      #qrcode img,
+      #qrcode canvas {
+        display: block;
+      }
+      .qr-verified {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--green);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-align: center;
+      }
+
+      /* Footer */
+      .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 48px;
+        border-top: 1px solid var(--line);
+        background: #fafafa;
+      }
+      .footer-brand {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--green);
+      }
+      .footer-scan {
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .footer-scan strong {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      /* Empty state */
+      .empty-state {
+        text-align: center;
+        padding: 80px 24px;
+        color: #374151;
+      }
+      .empty-state h2 {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+      .empty-state p {
+        color: #6b7280;
+      }
+
+      /* TV MODE */
+      body.tv-mode {
+        background: #04080f;
+        padding: 0;
+        gap: 0;
+        justify-content: flex-start;
+      }
+      body.tv-mode .toolbar {
+        display: none;
+      }
+      body.tv-mode .card-wrap {
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      body.tv-mode .access-banner {
+        font-size: clamp(22px, 4.8vw, 64px);
+        letter-spacing: 0.06em;
+        padding: clamp(16px, 3vh, 40px) 32px;
+        flex-shrink: 0;
+      }
+      body.tv-mode .card-body {
+        flex: 1;
+        padding: clamp(28px, 4vw, 72px);
+        grid-template-columns: minmax(220px, 0.85fr) 1fr minmax(220px, 0.85fr);
+        align-items: center;
+      }
+      body.tv-mode .left-col {
+        padding-right: clamp(20px, 3vw, 56px);
+      }
+      body.tv-mode .right-col {
+        padding-left: clamp(20px, 3vw, 56px);
+      }
+      body.tv-mode .mid-col {
+        padding: 0 clamp(20px, 3vw, 56px);
+      }
+      body.tv-mode .photo-ring {
+        width: clamp(130px, 14vw, 220px);
+        height: clamp(130px, 14vw, 220px);
+      }
+      body.tv-mode .brand-name {
+        font-size: clamp(16px, 2.2vw, 32px);
+      }
+      body.tv-mode .member-name {
+        font-size: clamp(20px, 3vw, 44px);
+      }
+      body.tv-mode .section-title {
+        font-size: clamp(20px, 2.8vw, 36px);
+      }
+      body.tv-mode .info-label {
+        font-size: clamp(13px, 1.4vw, 20px);
+      }
+      body.tv-mode .info-value {
+        font-size: clamp(15px, 1.6vw, 24px);
+      }
+      body.tv-mode .info-row {
+        grid-template-columns: clamp(110px, 13vw, 190px) 1fr;
+        gap: 16px;
+      }
+      body.tv-mode .info-table {
+        gap: clamp(14px, 2vh, 26px);
+      }
+      body.tv-mode .status-pill {
+        font-size: clamp(13px, 1.4vw, 20px);
+        padding: 8px 28px;
+      }
+      body.tv-mode #qrcode img,
+      body.tv-mode #qrcode canvas {
+        width: clamp(160px, 15vw, 260px) !important;
+        height: clamp(160px, 15vw, 260px) !important;
+      }
+      body.tv-mode .card-footer {
+        padding: clamp(12px, 2vh, 22px) clamp(28px, 4vw, 72px);
+      }
+      body.tv-mode .footer-brand,
+      body.tv-mode .footer-scan {
+        font-size: clamp(13px, 1.2vw, 18px);
+      }
+
+      /* Print */
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+        }
+        .toolbar {
+          display: none;
+        }
+        .card-wrap {
+          max-width: 105mm;
+          box-shadow: none;
+          border-radius: 8px;
+        }
+        .card-body {
+          grid-template-columns: 1fr;
+          padding: 20px;
+          gap: 20px;
+        }
+        .left-col {
+          border-right: none;
+          padding-right: 0;
+        }
+        .mid-col {
+          padding: 0;
+        }
+        .right-col {
+          border-left: none;
+          padding-left: 0;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .card-body {
+          grid-template-columns: 1fr;
+          gap: 28px;
+          padding: 28px 24px;
+        }
+        .left-col {
+          border-right: none;
+          padding-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding-bottom: 24px;
+        }
+        .mid-col {
+          padding: 0;
+        }
+        .right-col {
+          border-left: none;
+          padding-left: 0;
+          border-top: 1px solid var(--line);
+          padding-top: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar" id="toolbar">
+      <h1>Member Profile Card</h1>
+      <div class="toolbar-actions">
+        <input
+          id="member-search"
+          list="member-options"
+          placeholder="Search by name or ID"
+        />
+        <datalist id="member-options"></datalist>
+        <select id="member-select">
+          <option value="">— Select member —</option>
+        </select>
+        <button onclick="goToSelectedMember()">Open</button>
+        <button onclick="window.print()">Print</button>
+        <button onclick="downloadCardPng()">Download PNG</button>
+      </div>
+    </div>
+
+    <div class="card-wrap" id="card-wrap">
+      <div class="access-banner waiting" id="access-banner">Verifying…</div>
+
+      <div class="card-body">
+        <!-- LEFT -->
+        <div class="left-col">
+          <div>
+            <div class="brand-name">Proseth Fitness</div>
+            <div class="brand-sub">Phnom Penh, Cambodia</div>
+          </div>
+          <div class="photo-ring">
+            <img id="member-photo" src="" alt="Member photo" />
+          </div>
+          <div>
+            <div class="member-name" id="m-name">—</div>
+            <div class="member-role" id="m-role">Gym Member</div>
+          </div>
+        </div>
+
+        <!-- MIDDLE -->
+        <div class="mid-col">
+          <div class="section-label">Verification Details</div>
+          <div class="section-title">Member Information</div>
+          <div class="divider"></div>
+          <div class="info-table">
+            <div class="info-row">
+              <span class="info-label">Member ID:</span>
+              <span class="info-value" id="v-id">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Plan Type:</span>
+              <span class="info-value" id="v-plan">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Start Date:</span>
+              <span class="info-value" id="v-start">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Expiry Date:</span>
+              <span class="info-value" id="v-expiry">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Remaining:</span>
+              <span class="info-value" id="v-remaining">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Status:</span>
+              <span class="status-pill expired" id="v-status-pill">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right-col">
+          <div class="qr-box">
+            <div id="qrcode"></div>
+          </div>
+          <div class="qr-verified">✓ Verified QR</div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <span class="footer-brand">Powered By: Proseth Solutions</span>
+        <span class="footer-scan"
+          >Scan Time: <strong id="scan-time">—</strong></span
+        >
+      </div>
+    </div>
+
+    <div id="empty-state" class="empty-state" style="display: none">
+      <h2>No member selected</h2>
+      <p>Open the card with ?id=1 or search above.</p>
+    </div>
+
+    <script>
+      function getParam(n) {
+        return new URL(location.href).searchParams.get(n);
+      }
+
+      function formatDate(v) {
+        if (!v) return "—";
+        const d = new Date(v);
+        if (isNaN(d.getTime())) return v;
+        return new Intl.DateTimeFormat("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }).format(d);
+      }
+
+      function nowTime() {
+        return new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      }
+
+      function shouldDeny(s) {
+        const n = String(s || "").toLowerCase();
+        return (
+          n.includes("expired") || n.includes("denied") || n.includes("blocked")
+        );
+      }
+
+      function getMemberCode(m) {
+        return (
+          m.card_number ||
+          m.member_code ||
+          `PS-${String(m.id || "0").padStart(4, "0")}`
+        );
+      }
+
+      function memberLabel(m) {
+        return `${m.name || "Member"} (${getMemberCode(m)})`;
+      }
+
+      function initials(name) {
+        return String(name || "")
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((p) => p[0].toUpperCase())
+          .join("");
+      }
+
+      function placeholderSrc(name) {
+        const i = initials(name) || "M";
+        return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+            <rect width="400" height="400" fill="#1a3a2a"/>
+            <circle cx="200" cy="155" r="88" fill="#2d8a4a" opacity="0.8"/>
+            <text x="200" y="178" font-family="sans-serif" font-size="80" font-weight="800" fill="white" text-anchor="middle" dominant-baseline="middle">${i}</text>
+            <ellipse cx="200" cy="380" rx="140" ry="80" fill="#2d8a4a" opacity="0.5"/>
+          </svg>`,
+        )}`;
+      }
+
+      let memberDirectory = [];
+      let currentMember = null;
+      let tvEventSource = null;
+
+      function resolveMemberTarget(v) {
+        const input = String(v || "")
+          .trim()
+          .toLowerCase();
+        if (!input) return null;
+        return (
+          memberDirectory.find((m) => {
+            const code = getMemberCode(m).toLowerCase();
+            const name = String(m.name || "").toLowerCase();
+            return (
+              String(m.id) === v ||
+              code === input ||
+              name.includes(input) ||
+              code.includes(input)
+            );
+          }) || null
+        );
+      }
+
+      function renderMemberPicker(members, selectedId) {
+        const sel = document.getElementById("member-select");
+        const dl = document.getElementById("member-options");
+        const si = document.getElementById("member-search");
+        if (!sel) return;
+        sel.innerHTML =
+          `<option value="">— Select member —</option>` +
+          members
+            .map((m) => `<option value="${m.id}">${memberLabel(m)}</option>`)
+            .join("");
+        dl.innerHTML = members
+          .map((m) => `<option value="${memberLabel(m)}"></option>`)
+          .join("");
+        if (selectedId) {
+          sel.value = String(selectedId);
+          const ch = members.find((m) => String(m.id) === String(selectedId));
+          if (ch && si) si.value = memberLabel(ch);
+        }
+      }
+
+      function goToSelectedMember() {
+        const sel = document.getElementById("member-select");
+        const si = document.getElementById("member-search");
+        if (sel?.value) {
+          window.location.href = `card-view.html?id=${sel.value}`;
+          return;
+        }
+        const resolved = resolveMemberTarget(si?.value);
+        if (resolved) window.location.href = `card-view.html?id=${resolved.id}`;
+      }
+
+      function statusPillClass(s) {
+        const n = String(s || "").toLowerCase();
+        if (n.includes("expired")) return "expired";
+        if (n.includes("expir") || n.includes("pending")) return "expiring";
+        return "active";
+      }
+
+      function applyMember(member) {
+        currentMember = member;
+        const name = member.name || "Member";
+        const code = getMemberCode(member);
+        const status = member.status || "Active";
+        const daysLeft = member.days_left ?? 0;
+        const plan = member.membership_type || "—";
+        const denied = shouldDeny(status);
+
+        // Banner
+        const banner = document.getElementById("access-banner");
+        banner.className = `access-banner ${denied ? "denied" : "allowed"}`;
+        banner.innerText = denied ? "ACCESS DENIED" : "ACCESS ALLOWED";
+
+        // Left
+        document.getElementById("m-name").innerText = name.toUpperCase();
+        document.getElementById("m-role").innerText = plan + " Member";
+        const photo = document.getElementById("member-photo");
+        const photoUrl = member.photo_url || member.photo || "";
+        photo.src = photoUrl || placeholderSrc(name);
+
+        // Middle
+        document.getElementById("v-id").innerText = code;
+        document.getElementById("v-plan").innerText = plan;
+        document.getElementById("v-start").innerText = formatDate(
+          member.join_date || member.start_date || "",
+        );
+        const expiryEl = document.getElementById("v-expiry");
+        expiryEl.innerText = formatDate(member.expiry_date || "");
+        expiryEl.className = `info-value${denied ? " red" : ""}`;
+        const remEl = document.getElementById("v-remaining");
+        remEl.innerText = `${daysLeft} Days`;
+        remEl.className = `info-value${denied || daysLeft <= 7 ? " red" : ""}`;
+        const pill = document.getElementById("v-status-pill");
+        pill.innerText = String(status).toUpperCase();
+        pill.className = `status-pill ${statusPillClass(status)}`;
+
+        // QR
+        const qrEl = document.getElementById("qrcode");
+        qrEl.innerHTML = "";
+        const tvMode = document.body.classList.contains("tv-mode");
+        const qrSize = tvMode
+          ? Math.round(Math.min(window.innerWidth * 0.15, 260))
+          : 180;
+        new QRCode(qrEl, {
+          text: code,
+          width: Math.max(qrSize, 160),
+          height: Math.max(qrSize, 160),
+        });
+
+        // Footer
+        document.getElementById("scan-time").innerText = nowTime();
+      }
+
+      // TV
+      function normalizeBranch(b) {
+        return String(b || "Front Desk").trim() || "Front Desk";
+      }
+      function formatScanTime(v) {
+        if (!v) return "—";
+        const d = new Date(v);
+        return isNaN(d.getTime())
+          ? v
+          : d.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            });
+      }
+
+      function applyTvPayload(payload) {
+        if (!payload?.scan) return;
+        if (!payload.member) {
+          const banner = document.getElementById("access-banner");
+          banner.className = "access-banner denied";
+          banner.innerText = `NOT FOUND: ${payload.scan.member_code || "unknown"}`;
+          document.getElementById("scan-time").innerText =
+            formatScanTime(payload.scan.scanned_at) || nowTime();
+          return;
+        }
+        applyMember(payload.member);
+        if (payload.scan?.scanned_at)
+          document.getElementById("scan-time").innerText = formatScanTime(
+            payload.scan.scanned_at,
+          );
+      }
+
+      async function loadLatestTvScan(branch) {
+        try {
+          const res = await fetch(
+            `/api/tv/${encodeURIComponent(branch)}/latest`,
+          );
+          if (!res.ok) throw new Error();
+          const payload = await res.json();
+          if (payload.scan) applyTvPayload(payload);
+          else showTvWaiting(branch);
+        } catch {
+          showTvWaiting(branch);
+        }
+      }
+
+      function showTvWaiting(branch) {
+        const banner = document.getElementById("access-banner");
+        banner.className = "access-banner waiting";
+        banner.innerText = `Waiting for ${normalizeBranch(branch)} scan…`;
+      }
+
+      function connectTvStream(branch) {
+        if (!window.EventSource) {
+          setInterval(() => loadLatestTvScan(branch), 3000);
+          return;
+        }
+        if (tvEventSource) tvEventSource.close();
+        tvEventSource = new EventSource(
+          `/api/tv/${encodeURIComponent(branch)}/stream`,
+        );
+        tvEventSource.addEventListener("scan", (e) => {
+          try {
+            applyTvPayload(JSON.parse(e.data));
+          } catch {}
+        });
+      }
+
+      function startClock() {
+        setInterval(() => {
+          if (!currentMember)
+            document.getElementById("scan-time").innerText = nowTime();
+        }, 1000);
+      }
+
+      // PNG
+      function loadCanvasImage(src) {
+        return new Promise((resolve) => {
+          if (!src) {
+            resolve(null);
+            return;
+          }
+          try {
+            const u = new URL(src, location.href);
+            if (u.origin !== location.origin && !src.startsWith("data:")) {
+              resolve(null);
+              return;
+            }
+          } catch {
+            resolve(null);
+            return;
+          }
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          if (!src.startsWith("data:")) img.crossOrigin = "anonymous";
+          img.src = src;
+        });
+      }
+
+      async function downloadCardPng() {
+        if (!currentMember) {
+          alert("Card still loading.");
+          return;
+        }
+        const m = currentMember;
+        const code = getMemberCode(m);
+        const name = m.name || "Member";
+        const plan = m.membership_type || "Member";
+        const startDate = formatDate(
+          m.join_date || m.start_date || "",
+        ).toUpperCase();
+        const expiryDate = formatDate(m.expiry_date || "").toUpperCase();
+        const canvas = document.createElement("canvas");
+        canvas.width = 900;
+        canvas.height = 1260;
+        const ctx = canvas.getContext("2d");
+
+        const cardX = 58;
+        const cardY = 18;
+        const cardW = 784;
+        const cardH = 1224;
+        const gold = "#d8af58";
+        const goldSoft = "#f3d58a";
+
+        // Outer light background + shadowed card
+        ctx.fillStyle = "#dddddd";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,0.3)";
+        ctx.shadowBlur = 24;
+        ctx.shadowOffsetY = 10;
+        ctx.fillStyle = "#0b0e14";
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 34);
+        ctx.fill();
+        ctx.restore();
+
+        // Main dark gradient body
+        const bodyGrad = ctx.createLinearGradient(
+          cardX,
+          cardY,
+          cardX + cardW,
+          cardY + cardH,
+        );
+        bodyGrad.addColorStop(0, "#1a1f27");
+        bodyGrad.addColorStop(0.35, "#070b13");
+        bodyGrad.addColorStop(1, "#02060d");
+        ctx.fillStyle = bodyGrad;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 34);
+        ctx.fill();
+
+        // Gold border
+        ctx.strokeStyle = "rgba(216,175,88,0.85)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(cardX + 1.5, cardY + 1.5, cardW - 3, cardH - 3, 32);
+        ctx.stroke();
+
+        // Top logo / title
+        ctx.textAlign = "center";
+        ctx.fillStyle = gold;
+        ctx.font = "400 58px Inter,Arial,sans-serif";
+        ctx.fillText("PROSETH", 450, 112);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "400 52px Inter,Arial,sans-serif";
+        ctx.fillText("FITNESS", 450, 168);
+        ctx.fillStyle = goldSoft;
+        ctx.font = "400 24px Inter,Arial,sans-serif";
+        ctx.fillText("STRONGER EVERYDAY", 450, 210);
+
+        ctx.strokeStyle = gold;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(395, 238);
+        ctx.lineTo(505, 238);
+        ctx.stroke();
+
+        // Plan badge at top right
+        ctx.save();
+        ctx.fillStyle = "rgba(216,175,88,0.14)";
+        ctx.strokeStyle = "rgba(216,175,88,0.9)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(646, 64, 112, 58, 14);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = goldSoft;
+        ctx.textAlign = "center";
+        ctx.font = "700 14px Inter,Arial,sans-serif";
+        ctx.fillText("PLAN", 702, 86);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "800 20px Inter,Arial,sans-serif";
+        ctx.fillText(plan.toUpperCase(), 702, 110);
+        ctx.restore();
+
+        ctx.fillStyle = gold;
+        ctx.font = "700 64px Inter, Arial, sans-serif";
+        ctx.fillText("  MEMBER ", 330, 318); // space after MEMBER
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(" CARD", 560, 318); // space before CARD
+
+        // Decorative gold diagonals
+        const wingGradL = ctx.createLinearGradient(90, 580, 280, 500);
+        wingGradL.addColorStop(0, gold);
+        wingGradL.addColorStop(1, "rgba(216,175,88,0)");
+        ctx.fillStyle = wingGradL;
+        ctx.beginPath();
+        ctx.moveTo(76, 670);
+        ctx.lineTo(286, 560);
+        ctx.lineTo(246, 540);
+        ctx.lineTo(76, 622);
+        ctx.closePath();
+        ctx.fill();
+
+        const wingGradR = ctx.createLinearGradient(810, 580, 620, 500);
+        wingGradR.addColorStop(0, gold);
+        wingGradR.addColorStop(1, "rgba(216,175,88,0)");
+        ctx.fillStyle = wingGradR;
+        ctx.beginPath();
+        ctx.moveTo(824, 670);
+        ctx.lineTo(614, 560);
+        ctx.lineTo(654, 540);
+        ctx.lineTo(824, 622);
+        ctx.closePath();
+        ctx.fill();
+
+        // Circular photo frame
+        const photo = await loadCanvasImage(m.photo_url || m.photo || "");
+        const cx = 450;
+        const cy = 500;
+        const outerR = 152;
+        const innerR = 138;
+        const ring = ctx.createRadialGradient(
+          cx - 35,
+          cy - 35,
+          20,
+          cx,
+          cy,
+          outerR,
+        );
+        ring.addColorStop(0, "#f6de9f");
+        ring.addColorStop(1, "#b9882f");
+        ctx.fillStyle = ring;
+        ctx.beginPath();
+        ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#060a10";
+        ctx.beginPath();
+        ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (photo) {
+          const pd = innerR * 2;
+          const scale = Math.max(pd / photo.width, pd / photo.height);
+          const dw = photo.width * scale;
+          const dh = photo.height * scale;
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cx, cy, innerR - 2, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(photo, cx - dw / 2, cy - dh / 2, dw, dh);
+          ctx.restore();
+        } else {
+          const phGrad = ctx.createLinearGradient(
+            cx - innerR,
+            cy - innerR,
+            cx + innerR,
+            cy + innerR,
+          );
+          phGrad.addColorStop(0, "#2e2312");
+          phGrad.addColorStop(1, "#120d07");
+          ctx.fillStyle = phGrad;
+          ctx.beginPath();
+          ctx.arc(cx, cy, innerR - 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = goldSoft;
+          ctx.font = "800 90px Inter,Arial,sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(initials(name) || "M", cx, cy + 36);
+        }
+
+        // Name and id
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "900 44px Inter,Arial,sans-serif";
+        ctx.fillText(name.toUpperCase(), 450, 716);
+        ctx.strokeStyle = "rgba(216,175,88,0.7)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(250, 736);
+        ctx.lineTo(650, 736);
+        ctx.stroke();
+
+        ctx.fillStyle = gold;
+        ctx.font = "800 30px Inter,Arial,sans-serif";
+        ctx.fillText("MEMBER ID", 450, 782);
+        ctx.fillStyle = "#f4f4f5";
+        ctx.font = "700 38px Inter,Arial,sans-serif";
+        ctx.fillText(code.toUpperCase(), 450, 826);
+
+        // QR
+        const qrEl = document.getElementById("qrcode");
+        const qrSrc = qrEl.querySelector("canvas") || qrEl.querySelector("img");
+        if (qrSrc) {
+          const qx = 307,
+            qy = 854,
+            qs = 270;
+          ctx.fillStyle = "white";
+          ctx.strokeStyle = "#e6e7eb";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(qx - 14, qy - 14, qs + 28, qs + 28, 14);
+          ctx.fill();
+          ctx.stroke();
+          ctx.drawImage(qrSrc, qx, qy, qs, qs);
+        }
+
+        // Join / Valid labels
+        ctx.textAlign = "center";
+        ctx.fillStyle = gold;
+        ctx.font = "800 24px Inter,Arial,sans-serif";
+        ctx.fillText("JOIN DATE", 180, 972);
+        ctx.fillText("VALID THRU", 720, 972);
+        ctx.fillStyle = "#f4f4f5";
+        ctx.font = "700 27px Inter,Arial,sans-serif";
+        ctx.fillText(startDate || "-", 180, 1018);
+        ctx.fillText(expiryDate || "-", 720, 1018);
+
+        // Bottom gold footer
+        const footerGrad = ctx.createLinearGradient(cardX, 0, cardX + cardW, 0);
+        footerGrad.addColorStop(0, "#c79233");
+        footerGrad.addColorStop(0.5, "#f2d389");
+        footerGrad.addColorStop(1, "#b9832b");
+        ctx.fillStyle = footerGrad;
+        ctx.beginPath();
+        ctx.roundRect(cardX, 1150, cardW, 92, 0);
+        ctx.fill();
+        ctx.fillStyle = "#111827";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#111827";
+        ctx.font = "700 22px Inter,Arial,sans-serif";
+        ctx.fillText("THANK YOU FOR BEING PART OF", 450, 1188);
+        ctx.font = "900 28px Inter,Arial,sans-serif";
+        ctx.fillText("PROSETH FITNESS", 450, 1220);
+        ctx.textBaseline = "alphabetic";
+
+        const link = document.createElement("a");
+        link.download = `${code}-card.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
+
+      async function init() {
+        const id = getParam("id");
+        const code = getParam("code");
+        const tvMode = getParam("tv") === "true";
+        const tvBranch = normalizeBranch(getParam("branch"));
+        const printMode = getParam("print") === "true";
+        const dlPng = getParam("download") === "png";
+
+        if (tvMode) {
+          document.body.classList.add("tv-mode");
+          document.getElementById("toolbar").style.display = "none";
+          showTvWaiting(tvBranch);
+          startClock();
+          await loadLatestTvScan(tvBranch);
+          connectTvStream(tvBranch);
+          return;
+        }
+
+        const members = await fetch("/api/members")
+          .then((r) => (r.ok ? r.json() : []))
+          .catch(() => []);
+        memberDirectory = members;
+        const selected = id || (code && resolveMemberTarget(code)?.id);
+        renderMemberPicker(members, selected || members[0]?.id);
+
+        if (printMode) {
+          document.body.classList.add("print-mode");
+          setTimeout(() => window.print(), 500);
+        }
+
+        let member = null;
+        if (id) {
+          const r = await fetch("/api/members/" + id);
+          if (r.ok) member = await r.json();
+        }
+        if (!member && code) {
+          const r = await fetch(
+            "/api/members/code/" + encodeURIComponent(code),
+          );
+          if (r.ok) member = await r.json();
+        }
+        if (!member && members.length) member = members[0];
+
+        if (!member) {
+          document.getElementById("card-wrap").style.display = "none";
+          document.getElementById("empty-state").style.display = "block";
+          return;
+        }
+
+        applyMember(member);
+        if (dlPng) setTimeout(downloadCardPng, 700);
+      }
+
+      window.addEventListener("load", init);
+    </script>
+  </body>
+</html>

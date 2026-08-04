@@ -1,0 +1,15 @@
+services:
+  gym-membership:
+    build: .
+    image: gym-membership:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_PATH=/app/data/gym.db
+    volumes:
+      - gym_data:/app/data
+
+volumes:
+  gym_data:
