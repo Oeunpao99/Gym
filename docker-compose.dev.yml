@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     env_file: .env.dev
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - gym_db_dev_data:/var/lib/postgresql/data
     healthcheck:
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "8000:8000"
+      - "8003:8000"
     depends_on:
       db:
         condition: service_healthy
