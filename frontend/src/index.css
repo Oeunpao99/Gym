@@ -780,6 +780,22 @@ tbody tr:hover td {
   border-top: 4px solid var(--pa-primary);
 }
 
+.modal-overlay--drawer {
+  padding: 0;
+  justify-content: flex-end;
+}
+
+.modal--drawer {
+  width: 50%;
+  max-height: none;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  border-top: none;
+  border-left: 4px solid var(--pa-primary);
+  overflow-y: auto;
+}
+
 .modal h3 {
   margin: 0 0 16px;
   font-size: 17px;
