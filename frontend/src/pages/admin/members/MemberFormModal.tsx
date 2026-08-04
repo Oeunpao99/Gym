@@ -97,8 +97,8 @@ export function MemberFormModal({ member, onClose, onSaved }: MemberFormModalPro
   }
 
   return (
-    <div className="modal-overlay modal-overlay--drawer" onClick={onClose}>
-      <div className="modal modal--drawer" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>{isEdit ? 'Edit Member' : 'New Member'}</h3>
         <form onSubmit={handleSubmit}>
           <label className="form-field">
